@@ -44,7 +44,75 @@ We use this categorical data encoding technique when the features are nominal(do
 
 # CODING AND OUTPUT:
        # INCLUDE YOUR CODING AND OUTPUT SCREENSHOTS HERE
+       import pandas as pd
+```
+import numpy as np
+from sklearn.preprocessing import LabelEncoder, StandardScaler, PowerTransformer
+from scipy.stats import boxcox
+
+#Load the Dataset
+
+data = pd.read_csv('Data_to_Transform.csv')
+print("Original Dataset:")
+print(data.head())
+
+data.fillna(data.mean(numeric_only=True), inplace=True)
+
+#Select a suitable numeric column for transformation
+
+numeric_column = data.select_dtypes(include=np.number).columns[0]
+print(f"\nColumn Selected for Transformation: {numeric_column}")
+
+#Keeping only positive values for log and boxcox
+
+positive_data = data[data[numeric_column] > 0].copy()
+
+#Log Transformation
+
+positive_data['Log_Transform'] = np.log(positive_data[numeric_column])
+
+#Reciprocal Transformation
+
+positive_data['Reciprocal_Transform'] = 1 / positive_data[numeric_column]
+
+#Square Root Transformation
+
+positive_data['Sqrt_Transform'] = np.sqrt(positive_data[numeric_column])
+
+#Square Transformation
+
+positive_data['Square_Transform'] = np.square(positive_data[numeric_column])
+
+Step 8: Box-Cox Transformation (only positive values)
+
+positive_data['BoxCox_Transform'], lambda_value = boxcox(positive_data[numeric_column])
+print(f"\nBox-Cox Lambda Value: {lambda_value}")
+
+#Yeo-Johnson Transformation (works with zero/negative values)
+
+pt = PowerTransformer(method='yeo-johnson')
+data['YeoJohnson_Transform'] = pt.fit_transform(data[[numeric_column]])
+
+#Standard Scaling
+
+scaler = StandardScaler()
+data['Standard_Scaled'] = scaler.fit_transform(data[[numeric_column]])
+
+#Saving the transformed dataset
+
+positive_data.to_csv('Transformed_Positive_Data.csv', index=False)
+data.to_csv('Transformed_Full_Data.csv', index=False)
+
+print("\nTransformation Completed Successfully.")
+print("\nTransformed Dataset Preview:")
+print(positive_data.head())
+```
+
+
 # RESULT:
-       # INCLUDE YOUR RESULT HERE
+  <img width="823" height="287" alt="Screenshot 2026-03-22 174331" src="https://github.com/user-attachments/assets/38c1552f-dc23-4ce4-b15e-40f7ef6880f2" />
+  <img width="804" height="544" alt="Screenshot 2026-03-22 174338" src="https://github.com/user-attachments/assets/1b4c394e-145b-4023-aeb9-fc84fc82ab23" />
+
+     # INCLUDE YOUR RESULT HERE
 
        
